@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"></head>
+<body>
+<div th:replace="fragments/navbar"></div>
+
+<main class="container">
+    <section class="add-master-layout">
+        <aside class="add-master-aside">
+            <div class="add-master-aside__header">
+                <div class="avatar-circle">
+                    <span>М</span>
+                </div>
+                <div>
+                    <h1>Новый мастер</h1>
+                    <p>Создайте карточку мастера, чтобы назначать его на объекты и отслеживать занятость.</p>
+                </div>
+            </div>
+
+            <ul class="add-master-aside__tips">
+                <li>Укажите реальное ФИО — оно будет видно в списках проектов.</li>
+                <li>Телефон и email нужны для связи и входа в систему.</li>
+                <li>Отметьте, является ли мастер бригадиром.</li>
+            </ul>
+        </aside>
+
+        <section class="add-master-card">
+            <header class="add-master-card__header">
+                <h2>Данные мастера</h2>
+                <span class="badge badge-light">Шаг 1 из 1</span>
+            </header>
+
+            <form th:action="@{/masters/add}"
+                  th:method="post"
+                  th:object="${masterModel}"
+                  class="add-master-form">
+
+                <fieldset class="form-block">
+                    <legend>Основная информация</legend>
+
+                    <div class="form-grid-2">
+                        <label for="fio">
+                            ФИО мастера
+                            <input th:field="*{fio}"
+                                   th:errorclass="is-invalid"
+                                   type="text"
+                                   id="fio"
+                                   placeholder="Иванов Иван Иванович"
+                                   required/>
+                            <small th:if="${#fields.hasErrors('fio')}" th:errors="*{fio}" class="text-danger"></small>
+                        </label>
+
+                        <label for="role">
+                            Должность / специализация
+                            <input th:field="*{role}"
+                                   th:errorclass="is-invalid"
+                                   type="text"
+                                   id="role"
+                                   placeholder="Электрик, сантехник, отделочник..."
+                                   required/>
+                            <small th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="text-danger"></small>
+                        </label>
+
+                        <label for="city">
+                            Город
+                            <input th:field="*{city}"
+                                   th:errorclass="is-invalid"
+                                   type="text"
+                                   id="city"
+                                   placeholder="Москва"
+                                   required/>
+                            <small th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="text-danger"></small>
+                        </label>
+
+                        <label for="experience">
+                            Опыт работы (лет)
+                            <input th:field="*{experience}"
+                                   th:errorclass="is-invalid"
+                                   type="number"
+                                   step="0.5"
+                                   min="0"
+                                   max="50"
+                                   id="experience"
+                                   placeholder="Например, 3.5"
+                                   required/>
+                            <small th:if="${#fields.hasErrors('experience')}" th:errors="*{experience}" class="text-danger"></small>
+                        </label>
+                    </div>
+
+                    <div class="radio-group">
+                        <span class="radio-group__label">Роль в команде</span>
+                        <div class="radio-group__items">
+                            <label>
+                                <input th:field="*{isBrigadier}"
+                                       th:value="true"
+                                       type="radio"
+                                       name="isBrigadier"/>
+                                Бригадир
+                            </label>
+                            <label>
+                                <input th:field="*{isBrigadier}"
+                                       th:value="false"
+                                       type="radio"
+                                       name="isBrigadier"
+                                       checked/>
+                                Мастер
+                            </label>
+                        </div>
+                        <small th:if="${#fields.hasErrors('isBrigadier')}" th:errors="*{isBrigadier}" class="text-danger"></small>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-block">
+                    <legend>Контакты и доступ</legend>
+
+                    <div class="form-grid-2">
+                        <label for="phone">
+                            Телефон или id в telegram
+                            <input th:field="*{phone}"
+                                   th:errorclass="is-invalid"
+                                   type="tel"
+                                   id="phone"
+                                   placeholder="+7 (999) 123-45-67"
+                                   required/>
+                            <small th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="text-danger"></small>
+                        </label>
+
+                        <label for="email">
+                            Email
+                            <input th:field="*{email}"
+                                   th:errorclass="is-invalid"
+                                   type="email"
+                                   id="email"
+                                   placeholder="master@example.com"/>
+                            <small th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></small>
+                        </label>
+
+                        <label for="password" class="full-width">
+                            Пароль для мастера
+                            <input th:field="*{password}"
+                                   th:errorclass="is-invalid"
+                                   type="password"
+                                   id="password"
+                                   placeholder="Задайте минимально безопасный пароль"/>
+                            <small th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-danger"></small>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <footer class="form-actions">
+                    <button type="submit" class="primary">Сохранить мастера</button>
+                    <button type="reset" class="secondary">Очистить</button>
+                    <a href="/masters/all" role="button" class="secondary outline">Отмена</a>
+                </footer>
+            </form>
+        </section>
+    </section>
+</main>
+
+<footer th:replace="fragments/footer"></footer>
+
+<style>
+    .add-master-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.5fr);
+        gap: 2rem;
+        align-items: flex-start;
+        margin-top: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+        .add-master-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .add-master-aside {
+        padding: 1.5rem;
+        border-radius: var(--pico-border-radius);
+        background: var(--pico-muted-background-color);
+        border: 1px solid var(--pico-muted-border-color);
+        font-size: 0.9rem;
+    }
+
+    .add-master-aside__header {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .add-master-aside__header h1 {
+        font-size: 1.3rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .add-master-aside__header p {
+        margin: 0;
+        color: var(--pico-muted-color);
+        font-size: 0.9rem;
+    }
+
+    .avatar-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.06);
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .add-master-aside__tips {
+        margin: 0.5rem 0 0;
+        padding-left: 1.1rem;
+        color: var(--pico-muted-color);
+    }
+
+    .add-master-aside__tips li {
+        margin-bottom: 0.2rem;
+    }
+
+    .add-master-card {
+        border-radius: var(--pico-border-radius);
+        border: 1px solid var(--pico-muted-border-color);
+        padding: 1.5rem 1.75rem;
+        background: white;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.03);
+        font-size: 0.9rem;
+    }
+
+    .add-master-card__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .add-master-card__header h2 {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .badge {
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+    }
+
+    .badge-light {
+        background: var(--pico-muted-background-color);
+        color: var(--pico-muted-color);
+    }
+
+    .add-master-form fieldset {
+        margin-bottom: 1.25rem;
+        border: none;
+        padding: 0;
+    }
+
+    .add-master-form legend {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem 1.5rem;
+    }
+
+    .form-grid-2 .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .add-master-form label {
+        font-size: 0.9rem;
+    }
+
+    .add-master-form input,
+    .add-master-form select,
+    .add-master-form textarea {
+        font-size: 0.9rem;
+    }
+
+    .radio-group {
+        margin-top: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .radio-group__label {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .radio-group__items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+    }
+
+    .text-danger {
+        font-size: 0.8rem;
+    }
+
+    .form-actions {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, auto));
+        gap: 0.75rem;
+        align-items: center;
+    }
+</style>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head"></head>
+<body>
+<div th:replace="fragments/navbar"></div>
+
+<main class="container home-layout" >
+     <section class="hero-card">
+          <div class="hero-text">
+               <h1>Система управления проектами</h1>
+               <p>
+                    Следите за объектами, мастерами и бригадирами в одном месте.
+                    Добавляйте проекты, назначайте команды и контролируйте статус работ.
+               </p>
+
+               <div class="hero-actions">
+                    <a href="/projects/add" role="button" class="primary">
+                         + Новый проект
+                    </a>
+                    <a href="/masters/add" role="button" class="secondary outline">
+                         + Новый мастер
+                    </a>
+               </div>
+
+          </div>
+
+          <div class="hero-summary">
+               <div class="summary-item">
+                    <span class="summary-label">Проекты</span>
+                    <span class="summary-value" th:text="${totalProjects != null ? totalProjects : '-'}">-</span>
+               </div>
+               <div class="summary-item">
+                    <span class="summary-label">Мастера</span>
+                    <span class="summary-value" th:text="${totalMasters != null ? totalMasters : '-'}">-</span>
+               </div>
+               <div class="summary-item">
+                    <span class="summary-label">Активные объекты</span>
+                    <span class="summary-value" th:text="${activeProjects != null ? activeProjects : '-'}">-</span>
+               </div>
+          </div>
+     </section>
+     <section class="home-grid">
+
+          <article class="home-card">
+               <header class="home-card__header">
+                    <h2>Мастера и бригадиры</h2>
+               </header>
+               <p>
+                    Управляйте списком мастеров: контакты, специализация, статус бригадира
+                    и привязка к объектам.
+               </p>
+               <ul class="home-list">
+                    <li>Добавление новых мастеров</li>
+                    <li>Отметка «Бригадир»</li>
+                    <li>Контактная информация и опыт</li>
+               </ul>
+               <footer class="home-card__footer">
+                    <a href="/masters/all" role="button" class="secondary outline">
+                         Открыть мастеров
+                    </a>
+               </footer>
+          </article>
+
+          <article class="home-card">
+               <header class="home-card__header">
+                    <h2>Действующие объекты</h2>
+               </header>
+               <p>
+                    Для бригадиров и модераторов — список текущих объектов с чек-листами задач
+                    и статусом выполнения.
+               </p>
+               <ul class="home-list">
+                    <li>Просмотр своих активных объектов</li>
+                    <li>Переход к задачам проекта</li>
+                    <li>Контроль этапов и статуса</li>
+               </ul>
+               <footer class="home-card__footer">
+                    <a href="/active-projects/all" role="button" class="secondary outline">
+                         Перейти к объектам
+                    </a>
+               </footer>
+          </article>
+     </section>
+
+     <section class="home-note">
+          <h3>Как начать работу?</h3>
+          <ol>
+               <li>Создайте проект и укажите основную информацию.</li>
+               <li>Добавьте мастеров и отметьте, кто является бригадиром.</li>
+               <li>Назначьте команду на проект и следите за статусом.</li>
+          </ol>
+          <p class="home-note__hint">
+               Совет: пользуйтесь поиском и фильтрами в разделах «Проекты» и «Мастера»,
+               чтобы быстро находить нужную информацию.
+          </p>
+     </section>
+</main>
+
+<footer th:replace="fragments/footer"></footer>
+
+<style>
+     .home-layout {
+         margin-top: 1.5rem;
+         margin-bottom: 2rem;
+         font-size: 0.95rem;
+     }
+
+     /* HERO */
+     .hero-card {
+         display: grid;
+         grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr);
+         gap: 2rem;
+         padding: 1.75rem 1.75rem 1.5rem;
+         border-radius: var(--pico-border-radius);
+         background: linear-gradient(135deg, rgba(0, 120, 255, 0.09), rgba(0, 200, 180, 0.08));
+         border: 1px solid var(--pico-muted-border-color);
+         margin-bottom: 2rem;
+     }
+
+     @media (max-width: 900px) {
+         .hero-card {
+             grid-template-columns: 1fr;
+         }
+     }
+
+     .hero-text h1 {
+         margin-bottom: 0.3rem;
+         font-size: 1.6rem;
+     }
+
+     .hero-text p {
+         margin-top: 0;
+         max-width: 36rem;
+         color: var(--pico-muted-color);
+     }
+
+     .hero-actions {
+         display: flex;
+         flex-wrap: wrap;
+         gap: 0.75rem;
+         margin: 1rem 0 0.5rem;
+     }
+
+     .hero-updated {
+         margin-top: 0.25rem;
+         color: var(--pico-muted-color);
+         font-size: 0.8rem;
+     }
+
+     .hero-summary {
+         display: grid;
+         gap: 0.75rem;
+         align-content: flex-start;
+     }
+
+     .summary-item {
+         padding: 0.75rem 1rem;
+         border-radius: var(--pico-border-radius);
+         background: rgba(255, 255, 255, 0.8);
+         border: 1px solid var(--pico-muted-border-color);
+     }
+
+     .summary-label {
+         display: block;
+         font-size: 0.8rem;
+         color: var(--pico-muted-color);
+         margin-bottom: 0.2rem;
+     }
+
+     .summary-value {
+         font-size: 1.3rem;
+         font-weight: 600;
+     }
+
+     /* Основные карточки */
+     .home-grid {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+         gap: 1.5rem;
+         margin-bottom: 2rem;
+     }
+
+     .home-card {
+         border-radius: var(--pico-border-radius);
+         border: 1px solid var(--pico-muted-border-color);
+         padding: 1.25rem 1.4rem;
+         background: white;
+     }
+
+     .home-card__header {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         gap: 0.5rem;
+         margin-bottom: 0.5rem;
+     }
+
+     .home-card__header h2 {
+         font-size: 1.05rem;
+         margin: 0;
+     }
+
+     .home-card p {
+         margin-top: 0;
+         margin-bottom: 0.6rem;
+         color: var(--pico-muted-color);
+         font-size: 0.9rem;
+     }
+
+     .home-list {
+         margin: 0.25rem 0 0.75rem;
+         padding-left: 1.1rem;
+         font-size: 0.9rem;
+         color: var(--pico-muted-color);
+     }
+
+     .home-list li {
+         margin-bottom: 0.2rem;
+     }
+
+     .home-card__footer {
+         text-align: right;
+     }
+
+     /* Бейджи */
+     .badge {
+         padding: 0.2rem 0.6rem;
+         border-radius: 999px;
+         font-size: 0.75rem;
+         font-weight: 600;
+         text-transform: uppercase;
+         letter-spacing: 0.03em;
+         background: var(--pico-muted-background-color);
+         color: var(--pico-muted-color);
+         white-space: nowrap;
+     }
+
+     .badge-soft {
+         background: #eef4ff;
+         color: #3045a5;
+     }
+
+     .badge-accent {
+         background: #e3f7e8;
+         color: #0b8a3d;
+     }
+
+     /* Нижний блок-подсказка */
+     .home-note {
+         border-radius: var(--pico-border-radius);
+         border: 1px dashed var(--pico-muted-border-color);
+         padding: 1.25rem 1.4rem;
+         font-size: 0.9rem;
+         background: var(--pico-muted-background-color);
+     }
+
+     .home-note h3 {
+         margin-top: 0;
+         font-size: 1rem;
+         margin-bottom: 0.5rem;
+     }
+
+     .home-note ol {
+         margin: 0.25rem 0 0.75rem 1.1rem;
+         padding: 0;
+     }
+
+     .home-note__hint {
+         margin: 0;
+         color: var(--pico-muted-color);
+         font-size: 0.85rem;
+     }
+</style>
+
+</body>
+</html>

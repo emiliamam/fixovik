@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments/head"></head>
+<body>
+<div th:replace="fragments/navbar"></div>
+
+<main class="container"  style="max-width:100%; padding: 20px;">
+    <header class="masters-header">
+        <div>
+            <h1>Все мастера</h1>
+            <p>Просмотр и поиск зарегистрированных мастеров</p>
+        </div>
+
+        <a href="/masters/add" role="button" class="primary">
+            + Добавить мастера
+        </a>
+    </header>
+
+    <section th:if="${successMessage}" class="alert-success">
+        <p th:text="${successMessage}"></p>
+    </section>
+
+    <section th:if="${masterInfos == null or #lists.isEmpty(masterInfos)}">
+        <article class="card empty-card">
+            <h3>Мастера не найдены</h3>
+            <p>Нет зарегистрированных мастеров. Начните с добавления первого мастера.</p>
+            <a href="/masters/add" role="button" class="primary outline">
+                Добавить первого мастера
+            </a>
+        </article>
+    </section>
+
+    <section class="masters-search">
+        <form method="get" action="/masters/all">
+            <div class="masters-search__row">
+                <input type="search"
+                       name="search"
+                       th:value="${search}"
+                       placeholder="Поиск по имени, должности или городу…"
+                       aria-label="Поиск по мастерам">
+
+                <label style="display:flex; align-items:center; gap:.5rem; margin:0;">
+                    <input type="checkbox"
+                           name="brigadiersOnly"
+                           value="true"
+                           th:checked="${brigadiersOnly}">
+                    Только бригадиры
+                </label>
+
+                <button type="submit" class="secondary">Найти</button>
+            </div>
+        </form>
+
+    </section>
+
+    <section th:if="${masterInfos != null and not #lists.isEmpty(masterInfos)}"
+             class="masters-table-wrapper">
+
+        <table class="masters-table">
+            <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Должность</th>
+                <th>Город</th>
+                <th>Опыт (лет)</th>
+                <th>Телефон или id для связи</th>
+                <th>Email</th>
+                <th sec:authorize="hasRole('ADMIN')">Действия</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${masterInfos}">
+                <td th:text="${m.fio}">ФИО</td>
+                <td th:text="${m.role ?: '—'}">Должность</td>
+                <td th:text="${m.city ?: '—'}">Город</td>
+                <td th:text="${m.experience != null ? m.experience : '—'}">0</td>
+                <td th:text="${m.phone ?: '—'}">Телефон</td>
+                <td th:text="${m.email ?: '—'}">Email</td>
+
+                <td sec:authorize="hasRole('ADMIN')">
+                    <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+                        <form th:if="${m.isBrigadier}"
+                              th:action="@{/masters/brigadier/remove/{email}(email=${m.email})}"
+                              method="post"
+                              style="margin:0;"
+                              onsubmit="return confirm('Снять бригадира?')">
+                            <input type="hidden" name="search" th:value="${search}">
+                            <input type="hidden" name="brigadiersOnly" th:value="${brigadiersOnly}">
+                            <button type="submit" class="secondary outline danger-button">Снять бригадира</button>
+                        </form>
+                        <form th:if="${!m.isBrigadier}"
+                              th:action="@{/masters/brigadier/set/{email}(email=${m.email})}"
+                              method="post"
+                              style="margin:0;"
+                              onsubmit="return confirm('Назначить бригадиром?')">
+                            <input type="hidden" name="search" th:value="${search}">
+                            <input type="hidden" name="brigadiersOnly" th:value="${brigadiersOnly}">
+                            <button type="submit" class="secondary outline">Назначить бригадиром</button>
+                        </form>
+
+                    </div>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </section>
+    <nav th:if="${totalPages != null && totalPages > 1}" aria-label="Pagination">
+        <ul style="display: flex; justify-content: center; list-style: none; padding: 0;">
+            <a th:href="@{/masters/all(page=${currentPage - 1}, size=10, search=${search}, brigadiersOnly=${brigadiersOnly})}"
+               role="button" class="outline">Назад</a>
+
+            <li style="margin: 0 1rem; align-self: center;">
+                <span>Страница <strong th:text="${currentPage + 1}"></strong> из <strong th:text="${totalPages}"></strong></span>
+            </li>
+            <li th:if="${currentPage + 1 < totalPages}">
+                <a th:href="@{/masters/all(page=${currentPage + 1}, size=10, search=${search}, brigadiersOnly=${brigadiersOnly})}" role="button" class="outline">Вперед</a>
+            </li>
+        </ul>
+    </nav>
+</main>
+
+<footer th:replace="fragments/footer"></footer>
+
+<style>
+    .masters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .masters-header h1 {
+        font-size: 1.4rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .masters-header p {
+        font-size: 0.9rem;
+        color: var(--pico-muted-color);
+        margin: 0;
+    }
+
+    .alert-success {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        background-color:rgb(255 215 138);
+        border-radius: var(--pico-border-radius);
+        color: white;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .masters-search {
+        margin-bottom: 1rem;
+    }
+
+    .masters-search__row {
+        gap: 0.75rem;
+    }
+
+    .masters-search__row input[type="search"] {
+        flex: 1;
+    }
+
+    .empty-card {
+        text-align: center;
+        max-width: 500px;
+        margin: 2rem auto;
+        font-size: 0.9rem;
+    }
+
+    .masters-table-wrapper {
+        margin-top: 1rem;
+        overflow-x: auto;
+    }
+
+    .masters-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .masters-table thead {
+        background: var(--pico-muted-background-color);
+    }
+
+    .masters-table th,
+    .masters-table td {
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid var(--pico-muted-border-color);
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .masters-table th {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--pico-muted-color);
+    }
+
+    .masters-table tbody tr:hover {
+        background: rgba(0, 0, 0, 0.02);
+    }
+</style>
+
+</body>
+</html>

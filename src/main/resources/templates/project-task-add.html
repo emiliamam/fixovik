@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/head"></head>
+<body>
+<div th:replace="fragments/navbar"></div>
+
+<main class="container">
+    <section class="project-task-wrapper">
+        <header class="project-task-header">
+            <div>
+                <h1>
+                    Добавление задач для проекта
+                    <span class="project-name" th:text="${projectName}">Название проекта</span>
+                </h1>
+                <p>Добавьте одну или несколько задач для этого проекта.</p>
+            </div>
+        </header>
+
+        <div th:if="${successMessage}" class="alert-success">
+            <p th:text="${successMessage}"></p>
+        </div>
+        <div th:if="${errorMessage}" class="alert-error">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <form th:action="@{/active-projects/project-task/add}"
+              method="post"
+              class="project-task-form">
+            <input type="hidden" name="projectId" th:value="${projectId}"/>
+
+            <section class="project-checklist">
+                <div class="project-checklist-header">
+                    <h2>Новые задачи</h2>
+                    <p class="muted">
+                        Нажимайте на <strong>+</strong>, чтобы добавить ещё одну задачу.
+                    </p>
+                </div>
+
+                <div id="taskInputs" class="task-inputs">
+                    <div class="task-input-row">
+                        <input type="text"
+                               name="taskNames"
+                               placeholder="Введите название задачи"
+                               required/>
+                        <div style="width: 40px">
+                        <button type="button" class="remove-task" title="Удалить задачу">
+                            х
+                        </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="addTaskBtn" class="add-task-btn" title="Добавить задачу">
+                    +
+                </button>
+            </section>
+
+            <footer class="project-task-actions">
+                <button type="submit" class="primary">
+                    Сохранить задачи
+                </button>
+                <a th:href="@{/active-projects/project-task/{project-name}(project-name=${projectName})}"
+                   role="button"
+                   class="secondary outline">
+                    Назад к чек-листу
+                </a>
+            </footer>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="fragments/footer"></footer>
+
+<style>
+    .project-task-wrapper {
+        max-width: 900px;
+        margin: 0 auto 2rem;
+    }
+
+    .project-task-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .project-task-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .project-task-header p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--pico-muted-color);
+    }
+
+    .project-name {
+        font-weight: 600;
+    }
+
+    .project-task-form {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .project-checklist {
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.25rem;
+        border-radius: var(--pico-border-radius);
+        background: var(--pico-muted-background-color);
+    }
+
+    .project-checklist-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .project-checklist-header h2 {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .muted {
+        font-size: 0.85rem;
+        color: var(--pico-muted-color);
+    }
+
+    .task-inputs {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .task-input-row {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .task-input-row input[type="text"] {
+        flex: 1;
+    }
+
+    .remove-task {
+        border: none;
+        background: transparent;
+        font-size: 1.3rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 0.3rem;
+        color: var(--pico-del-color);
+    }
+
+    .remove-task:hover {
+        transform: scale(1.1);
+    }
+
+    .add-task-btn {
+        border-radius: 999px;
+        width: 2rem;
+        height: 2rem;
+        border: 1px solid var(--pico-primary-border);
+        background: transparent;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .add-task-btn:hover {
+        background: var(--pico-primary-background);
+        color: var(--pico-primary-inverse);
+    }
+
+    .project-task-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .alert-success,
+    .alert-error {
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--pico-border-radius);
+        font-size: 0.9rem;
+    }
+
+    .alert-success {
+        background-color: rgb(255 215 138);
+        color: white;
+    }
+
+    .alert-error {
+        background-color: var(--pico-del-color);
+        color: white;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const taskInputsContainer = document.getElementById('taskInputs');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+
+        addTaskBtn.addEventListener('click', function () {
+            const row = document.createElement('div');
+            row.className = 'task-input-row';
+            row.innerHTML = `
+                <input type="text"
+                       name="taskNames"
+                       placeholder="Введите название задачи"
+                       required/>
+                <button type="button" class="remove-task" title="Удалить задачу">
+                    &times;
+                </button>
+            `;
+            taskInputsContainer.appendChild(row);
+        });
+
+        taskInputsContainer.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-task')) {
+                const rows = taskInputsContainer.querySelectorAll('.task-input-row');
+                if (rows.length > 1) { // хотя бы одно поле всегда оставляем
+                    e.target.closest('.task-input-row').remove();
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

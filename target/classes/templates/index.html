@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head"></head>
+<body class="landing-body">
+
+<div th:replace="fragments/navbar"></div>
+
+<main class="landing-container">
+
+    <section class="landing-hero">
+        <h1>Fixovik — управление ремонтными проектами</h1>
+        <p>
+            Современная платформа для компаний, мастеров и бригадиров.
+            Контроль объектов, распределение задач, управление персоналом и прозрачная работа команды.
+        </p>
+
+        <div class="landing-actions">
+            <a href="/users/login" role="button" class="primary large">Войти в систему</a>
+        </div>
+    </section>
+
+    <section class="landing-features">
+        <article class="feature-card">
+            <h3>Управление проектами</h3>
+            <p>Создавайте, редактируйте и контролируйте объекты в режиме реального времени.</p>
+        </article>
+
+        <article class="feature-card">
+            <h3>Мастера и бригадиры</h3>
+            <p>Ведите базу сотрудников, назначайте роли и распределяйте ответственность.</p>
+        </article>
+
+        <article class="feature-card">
+            <h3>Чек-листы и задачи</h3>
+            <p>Отмечайте этапы работ, отслеживайте готовность и соблюдайте сроки.</p>
+        </article>
+    </section>
+
+
+</main>
+</body>
+<footer th:replace="fragments/footer"></footer>
+
+<style>
+    /* Общий фон */
+    .landing-body {
+        background: #ffffff;
+        display: block;
+        padding-top: 1rem; /* отступ, чтобы navbar не прилипал */
+        font-size: 1rem;
+    }
+
+    /* Центровка */
+    .landing-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        text-align: center;
+        padding: 0 1rem;
+    }
+
+    /* Логотип */
+    .landing-logo img {
+        width: 180px;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Hero секция */
+    .landing-hero h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .landing-hero p {
+        max-width: 650px;
+        margin: 0.5rem auto 1.5rem;
+        color: var(--pico-muted-color);
+        font-size: 1.05rem;
+    }
+
+    /* Кнопки */
+    .landing-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .large {
+        padding: 0.8rem 1.6rem;
+        font-size: 1rem;
+    }
+
+    /* Преимущества */
+    .landing-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.3rem;
+        margin: 2rem 0 2.5rem;
+    }
+
+    .feature-card {
+        padding: 1.2rem 1.3rem;
+        background: #f9fafb;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        text-align: center;
+    }
+
+    .feature-card h3 {
+        margin-top: 0;
+        font-size: 1.1rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .feature-card p {
+        margin: 0;
+        color: var(--pico-muted-color);
+    }
+
+    /* Футер */
+    .landing-footer {
+        margin-top: 2rem;
+        font-size: 0.85rem;
+        color: #777;
+    }
+</style>
+
+</html>
